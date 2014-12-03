@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>MSBuild.Microsoft.VisualStudio.Web.targets</id>
+    <version>12.0.4</version>
+    <authors>Microsoft</authors>
+    <owners>Pēteris Ņikiforovs</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>MSBuild targets for Web and WebApplications that come with Visual Studio. Useful for build servers that do not have Visual Studio installed.</description>
+    <releaseNotes>Includes .targets files from Visual Studio 2013 Update 4 that can be found in the "C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v12.0\{Web,WebApplications}" directories. The files are in the "tools\VSToolsPath" directory.</releaseNotes>
+    <copyright>Copyright (C) Microsoft Corporation. All rights reserved.</copyright>
+    <tags>msbuild</tags>
+  </metadata>
+</package>
