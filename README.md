@@ -6,16 +6,25 @@ Includes `.targets` files from Visual Studio 2013 Update 4 that can be found in 
 
 The files are in the `tools\VSToolsPath` directory.
 
+## Install
+
+### NuGet
+
+Package name is `MSBuild.Microsoft.VisualStudio.Web.targets`
+https://www.nuget.org/packages/MSBuild.Microsoft.VisualStudio.Web.targets/
+
+### Local NuGet feed
+
+If you can't wait for a new release, you can build your own NuGet package and use a local feed
+http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds
+
 ## Use
-
-Install the NuGet package (or get it from [nuget.org](https://www.nuget.org/packages/MSBuild.Microsoft.VisualStudio.Web.targets/))
-
-    PM> Install-Package MSBuild.Microsoft.VisualStudio.Web.targets
 
 Include the `.targets` files in your `.csproj`
 
 ```xml
-<Import Project="$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.12.0.4\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets" />
+<Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != '' And Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')" />
+<Import Project="$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.12.0.4\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets" Condition="('$(VSToolsPath)' == '' Or !Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')) And Exists('$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.12.0.4\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets')" />
 ```
 
 ## Build
