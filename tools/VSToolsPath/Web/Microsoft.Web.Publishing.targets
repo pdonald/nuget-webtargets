@@ -46,6 +46,9 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   <UsingTask TaskName="DetectRemoteProvider" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
   <UsingTask TaskName="PublishToolsVersionCheck" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
   <UsingTask TaskName="GetFileSkips" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
+  <UsingTask TaskName="PublishNuGetPackage" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
+  <UsingTask TaskName="CreateAppHostXDTFile" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
+  <UsingTask TaskName="VerifyAzureNet46Support" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
 
   <!-- The build process can be extended in a similar way as MS.Common.targets -->
   <PropertyGroup>
@@ -3894,7 +3897,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <!-- We will include the parameter when $(UseDeclareParametersXMLInMsDeploy) is false-->
       <_Package_MsDeployDeclareParameters Include="@(MsDeployDeclareParameters)" Condition="!$(UseDeclareParametersXMLInMsDeploy)" />
     </ItemGroup>
-
+   
 
     <VSMSDeploy Condition="!$(UseMsdeployExe)"
        MSDeployVersionsToTry="$(_MSDeployVersionsToTry)"
@@ -4127,7 +4130,8 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   <PropertyGroup>
     <CreatePackageOnPublish Condition="'$(CreatePackageOnPublish)'==''">false</CreatePackageOnPublish>
     <MSDeployPublishDependsOn Condition="'$(MSDeployPublishDependsOn)'==''">
-      GenerateGlobalPublishSetting;   
+      GenerateGlobalPublishSetting;
+      _CheckAzureNet46Support;      
       ValidateGlobalPackageSetting;
       GenerateMsDeployManifestSettings;
       GenerateMsdeployManifestFiles;
@@ -4164,10 +4168,12 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <MSDeployPublishSourceRoot Condition="$(CreatePackageOnPublish) And $(PackageAsSingleFile)">@(_MSDeployPackageFile->'%(FullPath)')</MSDeployPublishSourceRoot>
       <MSDeployPublishSourceType Condition="$(CreatePackageOnPublish) And !$(PackageAsSingleFile)">archiveDir</MSDeployPublishSourceType>
       <MSDeployPublishSourceRoot Condition="$(CreatePackageOnPublish) And !$(PackageAsSingleFile)">@(_MSDeployArchiveDir->'%(FullPath)')</MSDeployPublishSourceRoot>
+
       <!--Destination is alway a manifest-->
       <MSDeployPublishDestinationType>auto</MSDeployPublishDestinationType>
       <MSDeployPublishDestinationRoot></MSDeployPublishDestinationRoot>
-      <!--Property used when we invoke msdeploy process for publish-->
+
+      <!--Property used when we invoke msdeploy process for publish-->   
       <MsDeployDoNotDeleteRule Condition="$(SkipExtraFilesOnServer)">DoNotDeleteRule</MsDeployDoNotDeleteRule>
     </PropertyGroup>
 
@@ -4266,7 +4272,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <!-- We need to have those Parameters when it is direct publishing from manifest and not use -->
       <_VsPublish_MsDeployDeclareParameters Include="@(MsDeployDeclareParameters)" Condition="!$(UseDeclareParametersXMLInMsDeploy) And !$(CreatePackageOnPublish)" />
     </ItemGroup>
-
+         
     <VSMSDeploy
       Condition="!$(UseMsdeployExe)"
       MSDeployVersionsToTry="$(_MSDeployVersionsToTry)"
@@ -4724,6 +4730,16 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   </Target>
 
     <!--********************************************************************-->
+    <!-- Target _CheckAzureNet46Support-->
+    <!--********************************************************************-->
+    <Target Name="_CheckAzureNet46Support" Condition="'$(TargetFrameworkVersion)' == 'v4.6' and $(_Enable46Check) != 'false'">
+      <VerifyAzureNet46Support Condition="'$(MsDeployServiceUrl)' != ''"
+        ServiceUrl="$(MsDeployServiceUrl)">
+       </VerifyAzureNet46Support>
+    </Target>
+  
+
+    <!--********************************************************************-->
     <!-- Target _DetectDbDacFxProvider-->
     <!--********************************************************************-->
     <Target Name="_DetectDbDacFxProvider">
@@ -4753,6 +4769,31 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     </Target>
 
+
+  <!--***********************************************************************-->
+  <!--Custom Publish-->
+  <!--***********************************************************************-->
+
+  <Target Name="CustomPublish" >
+    <!-- MicroservicePublish-->
+    <CallTarget Targets="$(PublishTarget)" Condition=" '$(PublishTarget)' != ''"/>
+  
+  </Target>
+
+  <Target Name="Microservice">
+    <PropertyGroup>
+    <MicroserviceRootFolder Condition="'$(MicroserviceRootFolder)' == '' ">$(WebPublishPipelineProjectDirectory)\apiapp.json</MicroserviceRootFolder>
+    </PropertyGroup>
+
+    <PublishNuGetPackage
+      ManifestFileFullPath="$(MicroserviceRootFolder)"
+      ProjectFileFullPath="$(WebPublishPipeLineProjectFullPath)"
+      IntermediateOutputPath="$(_WPPDefaultIntermediateOutputPath)"
+      ProfileUserFile="$(PublishProfileRootFolder)\$(PublishProfileName).pubxml.user"
+      ApiKey="$(MicroserviceApiKey)"
+      />
+</Target>
+  
   <!-- The build process can be extended in a similar way as MS.Common.targets -->
   <PropertyGroup>
     <ImportByWildcardAfterMicrosoftWebPublishingTargets Condition="'$(ImportByWildcardAfterMicrosoftWebPublishingTargets)'==''">true</ImportByWildcardAfterMicrosoftWebPublishingTargets>

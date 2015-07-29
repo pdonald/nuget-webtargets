@@ -2,7 +2,7 @@
 
 MSBuild targets for Web and WebApplications that come with Visual Studio. Useful for build servers that do not have Visual Studio installed.
 
-Includes `.targets` files from Visual Studio 2013 Update 4 that can be found in the `C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v12.0\{Web,WebApplications}` directories. 
+Includes `.targets` files from Visual Studio 2015 that can be found in the `C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v14.0\{Web,WebApplications}` directories. 
 
 The files are in the `tools\VSToolsPath` directory.
 
@@ -24,7 +24,7 @@ Include the `.targets` files in your `.csproj`
 
 ```xml
 <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != '' And Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')" />
-<Import Project="$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.12.0.4\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets" Condition="('$(VSToolsPath)' == '' Or !Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')) And Exists('$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.12.0.4\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets')" />
+<Import Project="$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets" Condition="('$(VSToolsPath)' == '' Or !Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')) And Exists('$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets')" />
 ```
 
 ## Build

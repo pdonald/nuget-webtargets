@@ -88,32 +88,32 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
   <PropertyGroup>
     <!--This will be overwrite by ..\web\Microsoft.Web.Publishing.targets when $(UseWPP_CopyWebApplication) set to true-->
-   <OnBefore_CopyWebApplicationDefault>
-     _CopyWebApplicationLegacy;
-   </OnBefore_CopyWebApplicationDefault>
+    <OnBefore_CopyWebApplicationDefault>
+      _CopyWebApplicationLegacy;
+    </OnBefore_CopyWebApplicationDefault>
     <OnBefore_CopyWebApplicationDefault Condition="$(UseWPP_CopyWebApplication) AND Exists('$(MSBuildThisFileDirectory)\..\Web\Microsoft.Web.Publishing.targets')">
-     _WPPCopyWebApplication;
-   </OnBefore_CopyWebApplicationDefault>
-   <OnBefore_CopyWebApplication Condition="'$(OnBefore_CopyWebApplication)'==''">
-    $(OnBefore_CopyWebApplicationDefault);
-  </OnBefore_CopyWebApplication>
-    
-  <OnAfter_CopyWebApplication Condition="'$(OnAfter_CopyWebApplication)'==''">
-  </OnAfter_CopyWebApplication>
+      _WPPCopyWebApplication;
+    </OnBefore_CopyWebApplicationDefault>
+    <OnBefore_CopyWebApplication Condition="'$(OnBefore_CopyWebApplication)'==''">
+      $(OnBefore_CopyWebApplicationDefault);
+    </OnBefore_CopyWebApplication>
 
-  <_CopyWebApplicationDependsOn Condition="'$(_CopyWebApplicationDependsOn)'==''">
-    $(OnBefore_CopyWebApplication);
-  </_CopyWebApplicationDependsOn>
+    <OnAfter_CopyWebApplication Condition="'$(OnAfter_CopyWebApplication)'==''">
+    </OnAfter_CopyWebApplication>
+
+    <_CopyWebApplicationDependsOn Condition="'$(_CopyWebApplicationDependsOn)'==''">
+      $(OnBefore_CopyWebApplication);
+    </_CopyWebApplicationDependsOn>
 
   </PropertyGroup>
-  <Target Name="_CopyWebApplication" 
-          Condition="!$(Disable_CopyWebApplication) And '$(OutDir)' != '$(OutputPath)'" 
+  <Target Name="_CopyWebApplication"
+          Condition="!$(Disable_CopyWebApplication) And '$(OutDir)' != '$(OutputPath)'"
           DependsOnTargets="$(_CopyWebApplicationDependsOn)">
 
     <CallTarget Condition="'$(OnAfter_CopyWebApplication)' != ''" Targets="$(OnAfter_CopyWebApplication)" RunEachTargetSeparately="true" />
-    
+
   </Target>
-  
+
   <!--
 	============================================================
 	_CopyWebApplicationLegacy
@@ -133,55 +133,55 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <MakeDir Directories="$(WebProjectOutputDir)\bin" />
 
     <!-- Copy build outputs to _PublishedWebsites\app\bin folder -->
-    <Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(WebProjectOutputDir)\bin" 
+    <Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(WebProjectOutputDir)\bin"
           SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
-    <Copy SourceFiles="@(AddModules)" 
-          DestinationFolder="$(WebProjectOutputDir)\bin" 
+    <Copy SourceFiles="@(AddModules)"
+          DestinationFolder="$(WebProjectOutputDir)\bin"
           SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
-    <Copy SourceFiles="$(IntermediateOutputPath)$(_SGenDllName)" 
-          DestinationFolder="$(WebProjectOutputDir)\%(Content.SubFolder)%(Content.RecursiveDir)" 
-          SkipUnchangedFiles="true" 
+    <Copy SourceFiles="$(IntermediateOutputPath)$(_SGenDllName)"
+          DestinationFolder="$(WebProjectOutputDir)\%(Content.SubFolder)%(Content.RecursiveDir)"
+          SkipUnchangedFiles="true"
           Condition="'$(_SGenDllCreated)'=='true'"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
-    <Copy SourceFiles="$(IntermediateOutputPath)$(TargetName).pdb" 
-          DestinationFolder="$(WebProjectOutputDir)\bin" 
-          SkipUnchangedFiles="true" 
-          Condition="'$(_DebugSymbolsProduced)'=='true'" 
+    <Copy SourceFiles="$(IntermediateOutputPath)$(TargetName).pdb"
+          DestinationFolder="$(WebProjectOutputDir)\bin"
+          SkipUnchangedFiles="true"
+          Condition="'$(_DebugSymbolsProduced)'=='true'"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
-    <Copy SourceFiles="@(DocFileItem)" 
-          DestinationFolder="$(WebProjectOutputDir)\bin" 
-          SkipUnchangedFiles="true" 
+    <Copy SourceFiles="@(DocFileItem)"
+          DestinationFolder="$(WebProjectOutputDir)\bin"
+          SkipUnchangedFiles="true"
           Condition="'$(_DocumentationFileProduced)'=='true'"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
-    <Copy SourceFiles="@(IntermediateSatelliteAssembliesWithTargetPath)" 
-          DestinationFiles="@(IntermediateSatelliteAssembliesWithTargetPath->'$(WebProjectOutputDir)\bin\%(Culture)\$(TargetName).resources.dll')" 
-          SkipUnchangedFiles="true" 
+    <Copy SourceFiles="@(IntermediateSatelliteAssembliesWithTargetPath)"
+          DestinationFiles="@(IntermediateSatelliteAssembliesWithTargetPath->'$(WebProjectOutputDir)\bin\%(Culture)\$(TargetName).resources.dll')"
+          SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
-    <Copy SourceFiles="@(ReferenceComWrappersToCopyLocal); @(ResolvedIsolatedComModules); @(_DeploymentLooseManifestFile); @(NativeReferenceFile)" 
-          DestinationFolder="$(WebProjectOutputDir)\bin" 
-          SkipUnchangedFiles="true" 
+    <Copy SourceFiles="@(ReferenceComWrappersToCopyLocal); @(ResolvedIsolatedComModules); @(_DeploymentLooseManifestFile); @(NativeReferenceFile)"
+          DestinationFolder="$(WebProjectOutputDir)\bin"
+          SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
 
     <!-- copy any referenced assemblies to _PublishedWebsites\app\bin folder -->
     <Copy SourceFiles="@(ReferenceCopyLocalPaths)"
-          DestinationFiles="@(ReferenceCopyLocalPaths->'$(WebProjectOutputDir)\bin\%(DestinationSubDirectory)%(Filename)%(Extension)')" 
-          SkipUnchangedFiles="true" 
+          DestinationFiles="@(ReferenceCopyLocalPaths->'$(WebProjectOutputDir)\bin\%(DestinationSubDirectory)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
 
     <!-- Copy content files recursively to _PublishedWebsites\app\ folder -->
     <Copy SourceFiles="@(Content)" Condition="'%(Content.Link)' == ''"
-          DestinationFolder="$(WebProjectOutputDir)\%(Content.RelativeDir)" 
-          SkipUnchangedFiles="true" 
+          DestinationFolder="$(WebProjectOutputDir)\%(Content.RelativeDir)"
+          SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
     <Copy SourceFiles="@(Content)" Condition="!$(DisableLinkInCopyWebApplicaton) And '%(Content.Link)' != ''"
@@ -191,28 +191,28 @@ Copyright (C) Microsoft Corporation. All rights reserved.
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
 
     <!-- Copy items that have been marked to be copied to the bin folder -->
-    <Copy SourceFiles="@(_SourceItemsToCopyToOutputDirectory)" 
-          DestinationFolder="$(WebProjectOutputDir)\bin" 
-          SkipUnchangedFiles="true" 
+    <Copy SourceFiles="@(_SourceItemsToCopyToOutputDirectory)"
+          DestinationFolder="$(WebProjectOutputDir)\bin"
+          SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
-    <Copy SourceFiles="@(_SourceItemsToCopyToOutputDirectoryAlways)" 
-          DestinationFolder="$(WebProjectOutputDir)\bin" 
-          SkipUnchangedFiles="false" 
+    <Copy SourceFiles="@(_SourceItemsToCopyToOutputDirectoryAlways)"
+          DestinationFolder="$(WebProjectOutputDir)\bin"
+          SkipUnchangedFiles="false"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
 
     <!-- Copy Silverlight Zip and Xzp file to _PublishedWebsites\app\ folder-->
     <Copy SourceFiles="@(_WebApplicationSilverlightXapFiles)"
-          DestinationFolder="$(WebProjectOutputDir)\%(_WebApplicationSilverlightXapFiles.RelativeDir)" 
+          DestinationFolder="$(WebProjectOutputDir)\%(_WebApplicationSilverlightXapFiles.RelativeDir)"
           SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
 
     <!-- Copy items that need to be bin deployed to the bin folder -->
-    <Copy SourceFiles="@(_binDeployableAssemblies)" 
-          DestinationFolder="$(WebProjectOutputDir)\bin\%(_binDeployableAssemblies.DestinationRelPath)" 
-          SkipUnchangedFiles="true" 
+    <Copy SourceFiles="@(_binDeployableAssemblies)"
+          DestinationFolder="$(WebProjectOutputDir)\bin\%(_binDeployableAssemblies.DestinationRelPath)"
+          SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
 
@@ -291,13 +291,13 @@ Copyright (C) Microsoft Corporation. All rights reserved.
         The ContinueOnError setting is here so that, during project load, as
         much information as possible will be passed to the compilers.
         -->
-        <MSBuild
-            Projects="@(_SilverlightApplications)"
-            Targets="GetXapOutputFile"
-            BuildInParallel= "false"
-            Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration);Platform=AnyCPU;BuildingSolutionFile=false"
-            Condition="'@(_SilverlightApplications)' != ''"
-            ContinueOnError="!$(BuildingProject)">
+    <MSBuild
+        Projects="@(_SilverlightApplications)"
+        Targets="GetXapOutputFile"
+        BuildInParallel= "false"
+        Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration);Platform=AnyCPU;BuildingSolutionFile=false"
+        Condition="'@(_SilverlightApplications)' != ''"
+        ContinueOnError="!$(BuildingProject)">
 
       <Output TaskParameter="TargetOutputs" ItemName="_SilverlightXapFiles"/>
 
@@ -319,11 +319,11 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     </MSBuild>
 
     <!--Copy the outputs to the target folder-->
-    <CopyFilesToFolders SourceFiles="@(_SilverlightXapFiles)" 
-                        SilverlightApplications="@(_SilverlightApplications)" 
-                        ConfigName="$(Configuration)"  
+    <CopyFilesToFolders SourceFiles="@(_SilverlightXapFiles)"
+                        SilverlightApplications="@(_SilverlightApplications)"
+                        ConfigName="$(Configuration)"
                         Condition="'@(_SilverlightXapFiles)' != ''">
-      <Output TaskParameter="DestinationFiles" ItemName="_WebApplicationSilverlightXapFiles" />      
+      <Output TaskParameter="DestinationFiles" ItemName="_WebApplicationSilverlightXapFiles" />
     </CopyFilesToFolders>
 
     <!-- Issue a warning for each non-existent project. -->
@@ -371,11 +371,14 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <ItemGroup>
       <FileWrites Include ="@(_binDeployableAssemblies->'$(OutDir)%(DestinationRelPath)%(Filename)%(Extension)')" />
     </ItemGroup>
- </Target>
+  </Target>
 
   <!--Import publishing target-->
-  <Import Project="..\Web\Microsoft.Web.Publishing.targets" Condition="Exists('..\Web\Microsoft.Web.Publishing.targets')" />
+  <PropertyGroup>
+    <AspNetTargetsPath Condition=" '$(AspNetTargetsPath)'=='' ">$(MSBuildThisFileDirectory)..\Web\</AspNetTargetsPath>
+  </PropertyGroup>
 
+  <Import Project="$(AspNetTargetsPath)Microsoft.Web.Publishing.targets" Condition="Exists('$(AspNetTargetsPath)Microsoft.Web.Publishing.targets')" />
 
   <!--Ensure the Siliverlight zap file is created and copied to the bin folder for the Microsoft.Web.Publishing.targets-->
   <PropertyGroup>
