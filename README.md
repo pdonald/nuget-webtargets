@@ -2,7 +2,7 @@
 
 MSBuild targets for Web and WebApplications that come with Visual Studio. Useful for build servers that do not have Visual Studio installed.
 
-Includes `.targets` files from Visual Studio 2015 that can be found in the `C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v14.0\{Web,WebApplications}` directories. 
+Includes `.targets` files from Visual Studio 2015 that can be found in the `C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v14.0\{Web,WebApplications}` directories.
 
 The files are in the `tools\VSToolsPath` directory.
 
@@ -20,12 +20,7 @@ http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds
 
 ## Use
 
-Include the `.targets` files in your `.csproj`
-
-```xml
-<Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != '' And Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')" />
-<Import Project="$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets" Condition="('$(VSToolsPath)' == '' Or !Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')) And Exists('$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets')" />
-```
+Just install the nuget package. The package automatically sets the $(VSToolsPath) property to use the targets file in the tools folder.
 
 ## Build
 
