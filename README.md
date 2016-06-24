@@ -20,7 +20,14 @@ http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds
 
 ## Use
 
-Just install the nuget package. The package automatically sets the $(VSToolsPath) property to use the targets file in the tools folder.
+Just install the NuGet package. The package automatically sets the `$(VSToolsPath)` property to use the targets file in the tools folder.
+
+Or include the `.targets` files in your `.csproj`
+
+```xml
+<Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != '' And Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')" />
+<Import Project="$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets" Condition="('$(VSToolsPath)' == '' Or !Exists('$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets')) And Exists('$(SolutionDir)\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0\tools\VSToolsPath\WebApplications\Microsoft.WebApplication.targets')" />
+```
 
 ## Build
 
