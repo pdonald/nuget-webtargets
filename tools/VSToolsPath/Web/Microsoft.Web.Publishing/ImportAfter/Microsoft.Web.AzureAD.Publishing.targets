@@ -248,7 +248,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <_WebConfigsToTransformForAzureAuthenticationOutputParametersFile>$(_WebConfigsToTransformForAzureAuthenticationOutputFolder)\TransformForAzureAuthentication.parameters.xml</_WebConfigsToTransformForAzureAuthenticationOutputParametersFile>
     </PropertyGroup>
 
-    <MakeDir Directories="$(_WebConfigsToTransformForAzureAuthenticationOutputFolder)" Condition="!Exists($(_WebConfigsToTransformForAzureAuthenticationOutputFolder))"/>
+    <MakeDir Directories="$(_WebConfigsToTransformForAzureAuthenticationOutputFolder)" Condition="!Exists('$(_WebConfigsToTransformForAzureAuthenticationOutputFolder)')"/>
 
     <ExportParametersFile
       Parameters="@(_ParamsFromWebConfigsToTransformForAzureAuthentication)"
@@ -258,7 +258,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <ImportParametersFile  Files="$(_WebConfigsToTransformForAzureAuthenticationOutputParametersFile)"
                            DisableEscapeMSBuildVariable="$(ImportParametersFile_DisableEscapeMSBuildVariable)"
-                           Condition="!$(DisableAllVSGeneratedMSDeployParameter) And Exists($(_WebConfigsToTransformForAzureAuthenticationOutputParametersFile))" >
+                           Condition="!$(DisableAllVSGeneratedMSDeployParameter) And Exists('$(_WebConfigsToTransformForAzureAuthenticationOutputParametersFile)')" >
       <Output TaskParameter="Result" ItemName="_ImportAutoParameterizeAzureAuthenticationWebConfig"/>
     </ImportParametersFile>
 

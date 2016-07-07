@@ -31,7 +31,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   <PropertyGroup>
     <Microsoft_Web_Publishing_MSDeploy_Common_targets Condition="'$(Microsoft_Web_Publishing_MSDeploy_Common_targets)' == ''">Microsoft.Web.Publishing.MSDeploy.Common.targets</Microsoft_Web_Publishing_MSDeploy_Common_targets>
   </PropertyGroup>
-  <Import Project="$(Microsoft_Web_Publishing_MSDeploy_Common_targets)" Condition="'$(Microsoft_Web_Publishing_MSDeploy_Common_targets_Imported)' != 'true' And Exists($(Microsoft_Web_Publishing_MSDeploy_Common_targets))"/>
+  <Import Project="$(Microsoft_Web_Publishing_MSDeploy_Common_targets)" Condition="'$(Microsoft_Web_Publishing_MSDeploy_Common_targets_Imported)' != 'true' And Exists('$(Microsoft_Web_Publishing_MSDeploy_Common_targets)')"/>
 
   <PropertyGroup>
     <Microsoft_Web_Publishing_Deploy_Package_targets_Imported>True</Microsoft_Web_Publishing_Deploy_Package_targets_Imported>
