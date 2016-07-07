@@ -189,7 +189,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <WebPublishPipelineCustomizeTargetFile Condition="'$(WebPublishPipelineCustomizeTargetFile)'==''">$(WebPublishPipelineProjectDirectory)\*.wpp.targets</WebPublishPipelineCustomizeTargetFile>
     <WebPublishPipelineSolutionTargetFile Condition="'$(WebPublishPipelineSolutionTargetFile)'==''">$(WebPublishPipelineProjectDirectory)\..\wpp.deploysettings.targets</WebPublishPipelineSolutionTargetFile>
   </PropertyGroup>
-  <Import Project="$(WebPublishPipelineCustomizeTargetFile)" Condition="'$(WebPublishPipelineCustomizeTargetFile)' != ''"/>
+  <Import Project="$(WebPublishPipelineCustomizeTargetFile)" Condition="'$(WebPublishPipelineCustomizeTargetFile)' != '' And Exists('$(WebPublishPipelineCustomizeTargetFile)')"/>
   <Import Project="$(WebPublishPipelineSolutionTargetFile)" Condition="'$(WebPublishPipelineSolutionTargetFile)' != '' And Exists('$(WebPublishPipelineSolutionTargetFile)')"/>
 
   <!--***************************************************************-->
