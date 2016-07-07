@@ -68,7 +68,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
           DependsOnTargets="$(CleanWebProjectOutputDirDependsOn)">
     <!--Assertion check-->
     <!--In the case of Clean Packaging/Publish, we simply delete the WebProjectOutputDir-->
-    <RemoveDir Condition="Exists($(WebProjectOutputDir))" Directories="$(WebProjectOutputDir)" ContinueOnError="true" />
+    <RemoveDir Condition="Exists('$(WebProjectOutputDir)')" Directories="$(WebProjectOutputDir)" ContinueOnError="true" />
   </Target>
 
   <!--

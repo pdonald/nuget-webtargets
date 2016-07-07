@@ -158,7 +158,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
   <PropertyGroup Condition="$(_PublishProfileSet) And '$(PublishProfileName)' =='' And '$(WebPublishProfileFile)'==''">
     <WebPublishProfileFile Condition="'$([System.IO.Path]::IsPathRooted($(PublishProfile)))' == 'True'">$(PublishProfile)</WebPublishProfileFile>
-    <WebPublishProfileFile Condition="'$([System.IO.Path]::IsPathRooted($(PublishProfile)))' == 'False' And '$([System.IO.File]::Exists($(WebPublishPipelineProjectDirectory)\$(PublishProfile)))'">$(WebPublishPipelineProjectDirectory)\$(PublishProfile)</WebPublishProfileFile>
+    <WebPublishProfileFile Condition="'$([System.IO.Path]::IsPathRooted($(PublishProfile)))' == 'False' And '$([System.IO.File]::Exists('$(WebPublishPipelineProjectDirectory)\$(PublishProfile)'))'">$(WebPublishPipelineProjectDirectory)\$(PublishProfile)</WebPublishProfileFile>
     <WebPublishProfileFile Condition="'$(WebPublishProfileFile)'==''">$(PublishProfileRootFolder)\$(PublishProfile)</WebPublishProfileFile>
   </PropertyGroup>
 
@@ -169,7 +169,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
   <PropertyGroup>
     <_WebPublishProfileFileWillBeImported>false</_WebPublishProfileFileWillBeImported>
-    <_WebPublishProfileFileWillBeImported Condition="'$(EnableWebPublishProfileFile)'=='true' And '$(WebPublishProfileFile)' != '' And Exists($(WebPublishProfileFile))">true</_WebPublishProfileFileWillBeImported>
+    <_WebPublishProfileFileWillBeImported Condition="'$(EnableWebPublishProfileFile)'=='true' And '$(WebPublishProfileFile)' != '' And Exists('$(WebPublishProfileFile)')">true</_WebPublishProfileFileWillBeImported>
   </PropertyGroup>
 
   <Import Project="$(WebPublishProfileFile)" Condition="'$(_WebPublishProfileFileWillBeImported)'=='true'"/>
@@ -179,7 +179,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <WebPublishProfileParametersXMLFile Condition="'$(WebPublishProfileParametersXMLFile)'==''">$([System.IO.Path]::ChangeExtension($(WebPublishProfileFile), '.parameters.xml'))</WebPublishProfileParametersXMLFile>
   </PropertyGroup>
 
-  <Import Project="$(WebPublishProfileCustomizeTargetFile)" Condition="'$(WebPublishProfileCustomizeTargetFile)' != '' And Exists($(WebPublishProfileCustomizeTargetFile)) " />
+  <Import Project="$(WebPublishProfileCustomizeTargetFile)" Condition="'$(WebPublishProfileCustomizeTargetFile)' != '' And Exists('$(WebPublishProfileCustomizeTargetFile)') " />
 
   <!--***************************************************************-->
   <!-- If there is a file named $(WebPublishPipelineProjectName).wpp.targets it will automatically be imported. -->
@@ -189,8 +189,8 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <WebPublishPipelineCustomizeTargetFile Condition="'$(WebPublishPipelineCustomizeTargetFile)'==''">$(WebPublishPipelineProjectDirectory)\*.wpp.targets</WebPublishPipelineCustomizeTargetFile>
     <WebPublishPipelineSolutionTargetFile Condition="'$(WebPublishPipelineSolutionTargetFile)'==''">$(WebPublishPipelineProjectDirectory)\..\wpp.deploysettings.targets</WebPublishPipelineSolutionTargetFile>
   </PropertyGroup>
-  <Import Project="$(WebPublishPipelineCustomizeTargetFile)" Condition="'$(WebPublishPipelineCustomizeTargetFile)' != ''"/>
-  <Import Project="$(WebPublishPipelineSolutionTargetFile)" Condition="'$(WebPublishPipelineSolutionTargetFile)' != '' And Exists($(WebPublishPipelineSolutionTargetFile))"/>
+  <Import Project="$(WebPublishPipelineCustomizeTargetFile)" Condition="'$(WebPublishPipelineCustomizeTargetFile)' != '' And Exists('$(WebPublishPipelineCustomizeTargetFile)')"/>
+  <Import Project="$(WebPublishPipelineSolutionTargetFile)" Condition="'$(WebPublishPipelineSolutionTargetFile)' != '' And Exists('$(WebPublishPipelineSolutionTargetFile)')"/>
 
   <!--***************************************************************-->
   <!--Globals settings for the Clean target -->
@@ -489,8 +489,8 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectParametersXMLFiles Condition="Exists($(ProjectParametersXMLFile))" Include="$(ProjectParametersXMLFile)" />
-    <WebPublishProfileParametersXMLFiles Condition="'$(WebPublishProfileParametersXMLFile)' != '' And Exists($(WebPublishProfileParametersXMLFile))" Include="$(WebPublishProfileParametersXMLFile)" />
+    <ProjectParametersXMLFiles Condition="Exists('$(ProjectParametersXMLFile)')" Include="$(ProjectParametersXMLFile)" />
+    <WebPublishProfileParametersXMLFiles Condition="'$(WebPublishProfileParametersXMLFile)' != '' And Exists('$(WebPublishProfileParametersXMLFile)')" Include="$(WebPublishProfileParametersXMLFile)" />
     <ParametersXMLFiles Include="@(ProjectParametersXMLFiles)" />
     <ProfileParametersXMLFiles  Include="@(WebPublishProfileParametersXMLFiles)" />
   </ItemGroup>
@@ -731,7 +731,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <FilesToIncludeTargetFile Condition="Exists('$(MSBuildThisFileDirectory)\CollectFiles\$(FilesToIncludeForPublish).targets')">$(MSBuildThisFileDirectory)\CollectFiles\$(FilesToIncludeForPublish).targets</FilesToIncludeTargetFile>
     <FilesToIncludeTargetFile Condition="'$(FilesToIncludeTargetFile)'==''">$(MSBuildThisFileDirectory)\CollectFiles\Microsoft.Web.Publishing.$(FilesToIncludeForPublish).targets</FilesToIncludeTargetFile>
   </PropertyGroup>
-  <Import Condition="'$(FilesToIncludeTargetFile)' != '' And Exists($(FilesToIncludeTargetFile))"
+  <Import Condition="'$(FilesToIncludeTargetFile)' != '' And Exists('$(FilesToIncludeTargetFile)')"
     Project="$(FilesToIncludeTargetFile)" />
 
   <!-- Import the .targets file which defines the publish steps. This is based off $(WebPublishMethod) -->
@@ -746,7 +746,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <DeployTargetFile Condition="Exists('$(MSBuildThisFileDirectory)\Deploy\$(WebPublishMethod).targets')">$(MSBuildThisFileDirectory)\Deploy\$(WebPublishMethod).targets</DeployTargetFile>
     <DeployTargetFile Condition="'$(DeployTargetFile)'==''">$(MSBuildThisFileDirectory)\Deploy\Microsoft.Web.Publishing.Deploy.$(WebPublishMethod).targets</DeployTargetFile>
   </PropertyGroup>
-  <Import Condition="'$(DeployTargetFile)'!='' And Exists($(DeployTargetFile))"
+  <Import Condition="'$(DeployTargetFile)'!='' And Exists('$(DeployTargetFile)')"
            Project="$(DeployTargetFile)"/>
 
   <!-- Import AspNetCompile and Merge into the target -->
@@ -771,7 +771,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   <PropertyGroup>
     <Microsoft_Web_Publishing_MSDeploy_Common_targets Condition="'$(Microsoft_Web_Publishing_MSDeploy_Common_targets)' == ''">Deploy\Microsoft.Web.Publishing.MSDeploy.Common.targets</Microsoft_Web_Publishing_MSDeploy_Common_targets>
   </PropertyGroup>
-  <Import Project="$(Microsoft_Web_Publishing_MSDeploy_Common_targets)" Condition="'$(Microsoft_Web_Publishing_MSDeploy_Common_targets_Imported)' != 'true' And Exists($(Microsoft_Web_Publishing_MSDeploy_Common_targets))"/>
+  <Import Project="$(Microsoft_Web_Publishing_MSDeploy_Common_targets)" Condition="'$(Microsoft_Web_Publishing_MSDeploy_Common_targets_Imported)' != 'true' And Exists('$(Microsoft_Web_Publishing_MSDeploy_Common_targets)')"/>
 
 
   <!--********************************************************************-->
@@ -914,7 +914,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <Output TaskParameter="Include" ItemName="ExcludeFromPackageFiles"/>
     </CreateItem>
 
-    <MakeDir Condition="$(EnablePackageProcessLoggingAndAssert) And !Exists($(PackageLogDir))"
+    <MakeDir Condition="$(EnablePackageProcessLoggingAndAssert) And !Exists('$(PackageLogDir)')"
              Directories="$(PackageLogDir)" />
     <WriteLinesToFile Condition="$(EnablePackageProcessLoggingAndAssert)"
                       Encoding="utf-8"
@@ -1197,7 +1197,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   <Target Name="_CleanWPPIfNeedTo" Condition="'$(_CleanWPPIfNeedTo)' != 'False'" DependsOnTargets="$(_CleanWPPIfNeedToDependsOn)">
     <PropertyGroup>
       <_IsSameWPPBuildInfoAsLastBuildInfo>True</_IsSameWPPBuildInfoAsLastBuildInfo>
-      <_IsSameWPPBuildInfoAsLastBuildInfo Condition="!Exists($(_WPPLastBuildInfoLocation))">False</_IsSameWPPBuildInfoAsLastBuildInfo>
+      <_IsSameWPPBuildInfoAsLastBuildInfo Condition="!Exists('$(_WPPLastBuildInfoLocation)')">False</_IsSameWPPBuildInfoAsLastBuildInfo>
     </PropertyGroup>
    
     <!-- This is the tracking property -->
@@ -1231,7 +1231,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <_WPPLastBuildInfoLocationDirectory>$([System.IO.Path]::GetDirectoryName($(_WPPLastBuildInfoLocation)))</_WPPLastBuildInfoLocationDirectory>
     </PropertyGroup>
 
-    <MakeDir Directories="$(_WPPLastBuildInfoLocationDirectory)" Condition="!Exists($(_WPPLastBuildInfoLocationDirectory))"/>
+    <MakeDir Directories="$(_WPPLastBuildInfoLocationDirectory)" Condition="!Exists('$(_WPPLastBuildInfoLocationDirectory)')"/>
 
     <WriteLinesToFile  File="$(_WPPLastBuildInfoLocation)"
                         Lines="@(_WPPCurrentBuildInfoItems)"
@@ -1408,8 +1408,8 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <!-- Remove the output file if there is change on $(UseParameterizeToTransformWebConfig)-->
     <Delete Files="@(WebConfigsToTransform->'%(TransformOutputFile)');$(_WebConfigTransformOutputParametersFile)"
-            Condition="(!$(UseParameterizeToTransformWebConfig) And Exists($(_WebConfigTransformOutputParametersFile))) 
-                       Or ($(UseParameterizeToTransformWebConfig) And !Exists($(_WebConfigTransformOutputParametersFile)))"
+            Condition="(!$(UseParameterizeToTransformWebConfig) And Exists('$(_WebConfigTransformOutputParametersFile)')) 
+                       Or ($(UseParameterizeToTransformWebConfig) And !Exists('$(_WebConfigTransformOutputParametersFile)'))"
             ContinueOnError="true"/>
 
     <WriteLinesToFile Condition="$(EnablePackageProcessLoggingAndAssert) And ('@(WebConfigsToTransform)'!='') And !%(Exclude)"
@@ -1560,7 +1560,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <ImportParametersFile  Files="$(_WebConfigTransformOutputParametersFile)"
                            DisableEscapeMSBuildVariable="$(ImportParametersFile_DisableEscapeMSBuildVariable)"
-                           Condition="$(UseParameterizeToTransformWebConfig) and Exists($(_WebConfigTransformOutputParametersFile))">
+                           Condition="$(UseParameterizeToTransformWebConfig) and Exists('$(_WebConfigTransformOutputParametersFile)')">
       <Output TaskParameter="Result" ItemName="_ImportParameterizeTransformWebConfig"/>
     </ImportParametersFile>
 
@@ -1740,8 +1740,8 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <!-- Remove the output file if there is change on $(UseParameterizeToProfileTransformWebConfig)-->
     <Delete Files="@(ProfileWebConfigsToTransform->'%(TransformOutputFile)');$(_ProfileWebConfigTransformOutputParametersFile)"
-            Condition="(!$(UseParameterizeToProfileTransformWebConfig) And Exists($(_ProfileWebConfigTransformOutputParametersFile))) 
-                       Or ($(UseParameterizeToProfileTransformWebConfig) And !Exists($(_ProfileWebConfigTransformOutputParametersFile)))"
+            Condition="(!$(UseParameterizeToProfileTransformWebConfig) And Exists('$(_ProfileWebConfigTransformOutputParametersFile)')) 
+                       Or ($(UseParameterizeToProfileTransformWebConfig) And !Exists('$(_ProfileWebConfigTransformOutputParametersFile)'))"
             ContinueOnError="true"/>
 
     <WriteLinesToFile Condition="$(EnablePackageProcessLoggingAndAssert) And ('@(ProfileWebConfigsToTransform)'!='') And !%(Exclude)"
@@ -1889,7 +1889,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <ImportParametersFile  Files="$(_ProfileWebConfigTransformOutputParametersFile)" 
                            DisableEscapeMSBuildVariable="$(ImportParametersFile_DisableEscapeMSBuildVariable)"
-                           Condition="$(UseParameterizeToProfileTransformWebConfig) and Exists($(_ProfileWebConfigTransformOutputParametersFile))">
+                           Condition="$(UseParameterizeToProfileTransformWebConfig) and Exists('$(_ProfileWebConfigTransformOutputParametersFile)')">
       <Output TaskParameter="Result" ItemName="_ImportParameterizeProfileTransformWebConfig"/>
     </ImportParametersFile>
 
@@ -2180,7 +2180,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <!-- Remove the output file if there is change on $(UseParameterizeToTransformWebConfig)-->
     <Delete Files="@(_WebConfigsToAutoParmeterizeCS->'%(TransformOutputFile)');$(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile)"
-            Condition="!Exists($(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile))"
+            Condition="!Exists('$(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile)')"
             ContinueOnError="true"/>
 
     <MakeDir Directories="@(_WebConfigsToAutoParmeterizeCSOuputDirectories)" Condition="!Exists(%(Identity))"/>
@@ -2348,7 +2348,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <ImportParametersFile  Files="$(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile)"
                            DisableEscapeMSBuildVariable="$(ImportParametersFile_DisableEscapeMSBuildVariable)"
-                           Condition="!$(DisableAllVSGeneratedMSDeployParameter) And Exists($(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile))" >
+                           Condition="!$(DisableAllVSGeneratedMSDeployParameter) And Exists('$(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile)')" >
       <Output TaskParameter="Result" ItemName="_ImportAutoParameterizeCSTransformWebConfig"/>
     </ImportParametersFile>
 
@@ -2951,7 +2951,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <_PackageRoot Condition="!$(PackageAsSingleFile)">$(PackageArchiveRootDir)</_PackageRoot>
     </PropertyGroup>
 
-    <MakeDir Condition="!Exists($(_PackageRoot))"  Directories="$(_PackageRoot)" />
+    <MakeDir Condition="!Exists('$(_PackageRoot)')"  Directories="$(_PackageRoot)" />
     <CallTarget Targets="PackageUsingManifest"/>
   </Target>
 
@@ -3686,7 +3686,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   </PropertyGroup>
   <Target Name="CleanWebsitesPackage" DependsOnTargets="$(CleanWebsitesPackageDependsOn)">
     
-    <!--<RemoveDir Condition="Exists($(PackageLogDir))" Directories="$(PackageLogDir)" ContinueOnError="true" />-->
+    <!--<RemoveDir Condition="Exists('$(PackageLogDir)')" Directories="$(PackageLogDir)" ContinueOnError="true" />-->
     <Delete Files="$(PackageSourceManifest)" Condition="Exists('$(PackageSourceManifest)')" TreatErrorsAsWarnings="True" />
     <Delete Files="$(PublishParametersFile)" Condition="Exists('$(PublishParametersFile)')" TreatErrorsAsWarnings="True" />
     <Delete Files="$(GenerateSampleDeployScriptLocation)" Condition="Exists('$(GenerateSampleDeployScriptLocation)')" TreatErrorsAsWarnings="True" />
@@ -3706,7 +3706,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   <Target Name="CleanWebsitesWPPAllFilesInSingleFolder" DependsOnTargets="$(CleanWebsitesWPPAllFilesInSingleFolderDependsOn)">
     <!-- Assertion check-->
     <!-- In the case of Clean Packaging/Publish, we simply delete the WPPAllFilesInSingleFolder -->
-    <RemoveDir Condition="Exists($(WPPAllFilesInSingleFolder))" Directories="$(WPPAllFilesInSingleFolder)" ContinueOnError="true" />
+    <RemoveDir Condition="Exists('$(WPPAllFilesInSingleFolder)')" Directories="$(WPPAllFilesInSingleFolder)" ContinueOnError="true" />
   </Target>
 
 
@@ -3718,15 +3718,15 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     </CleanWebPublishPipelineIntermediateOutputDependsOn>
   </PropertyGroup>
   <Target Name="CleanWebPublishPipelineIntermediateOutput" DependsOnTargets="$(CleanWebPublishPipelineIntermediateOutputDependsOn)">
-    <RemoveDir Condition="Exists($(AutoParameterizationWebConfigConnectionStringsLocation))" Directories="$(AutoParameterizationWebConfigConnectionStringsLocation)" ContinueOnError="true" />
-    <RemoveDir Condition="Exists($(TransformWebConfigIntermediateLocation))" Directories="$(TransformWebConfigIntermediateLocation)" ContinueOnError="true" />
-    <RemoveDir Condition="Exists($(ProfileTransformWebConfigIntermediateLocation))" Directories="$(ProfileTransformWebConfigIntermediateLocation)" ContinueOnError="true" />
-    <RemoveDir Condition="Exists($(DatabaseDeployIntermediateOutputPath))" Directories="$(DatabaseDeployIntermediateOutputPath)" ContinueOnError="true" />
-    <RemoveDir Condition="Exists($(InsertAdditionalWebCofigConnectionStringsLocation))" Directories="$(InsertAdditionalWebCofigConnectionStringsLocation)" ContinueOnError="true" />
-    <Delete Condition="Exists($(_WebConfigTransformOutputParametersFile))" Files="$(_WebConfigTransformOutputParametersFile)" TreatErrorsAsWarnings="true" />
-    <Delete Condition="Exists($(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile))" Files="$(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile)" TreatErrorsAsWarnings="true" />
-    <Delete Condition="Exists($(_ProfileWebConfigTransformOutputParametersFile))" Files="$(_ProfileWebConfigTransformOutputParametersFile)" TreatErrorsAsWarnings="true" />
-    <Delete Condition="Exists($(_WPPLastBuildInfoLocation))" Files="$(_WPPLastBuildInfoLocation)" TreatErrorsAsWarnings="true" />
+    <RemoveDir Condition="Exists('$(AutoParameterizationWebConfigConnectionStringsLocation)')" Directories="$(AutoParameterizationWebConfigConnectionStringsLocation)" ContinueOnError="true" />
+    <RemoveDir Condition="Exists('$(TransformWebConfigIntermediateLocation)')" Directories="$(TransformWebConfigIntermediateLocation)" ContinueOnError="true" />
+    <RemoveDir Condition="Exists('$(ProfileTransformWebConfigIntermediateLocation)')" Directories="$(ProfileTransformWebConfigIntermediateLocation)" ContinueOnError="true" />
+    <RemoveDir Condition="Exists('$(DatabaseDeployIntermediateOutputPath)')" Directories="$(DatabaseDeployIntermediateOutputPath)" ContinueOnError="true" />
+    <RemoveDir Condition="Exists('$(InsertAdditionalWebCofigConnectionStringsLocation)')" Directories="$(InsertAdditionalWebCofigConnectionStringsLocation)" ContinueOnError="true" />
+    <Delete Condition="Exists('$(_WebConfigTransformOutputParametersFile)')" Files="$(_WebConfigTransformOutputParametersFile)" TreatErrorsAsWarnings="true" />
+    <Delete Condition="Exists('$(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile)')" Files="$(_WebConfigsToAutoParmeterizeCsTransformOutputParametersFile)" TreatErrorsAsWarnings="true" />
+    <Delete Condition="Exists('$(_ProfileWebConfigTransformOutputParametersFile)')" Files="$(_ProfileWebConfigTransformOutputParametersFile)" TreatErrorsAsWarnings="true" />
+    <Delete Condition="Exists('$(_WPPLastBuildInfoLocation)')" Files="$(_WPPLastBuildInfoLocation)" TreatErrorsAsWarnings="true" />
   </Target>
 
 
@@ -3880,7 +3880,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       />
 
     <!-- First delete the ParameterFile-->
-    <Delete Files="$(PackageParametersFile)"  Condition="Exists($(PackageParametersFile))"  ContinueOnError="true"/>
+    <Delete Files="$(PackageParametersFile)"  Condition="Exists('$(PackageParametersFile)')"  ContinueOnError="true"/>
 
     <ExportParametersFile
       Condition="$(UseDeclareParametersXMLInMsDeploy)"
@@ -4251,7 +4251,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       />
 
     <!-- First delete the ParameterFile-->
-    <Delete Files="$(PublishParametersFile)"  Condition="Exists($(PublishParametersFile))" ContinueOnError="true"/>
+    <Delete Files="$(PublishParametersFile)"  Condition="Exists('$(PublishParametersFile)')" ContinueOnError="true"/>
 
     <!-- Create the Parameterfile if needed-->
     <ExportParametersFile
@@ -4351,7 +4351,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <GetPublishingLocalizedString
        ID="PublishLocalizedString_WebPublishInvalidatePublishProfileSettings"
-       Condition="'$(WebPublishProfileFile)' == '' Or !Exists($(WebPublishProfileFile))"
+       Condition="'$(WebPublishProfileFile)' == '' Or !Exists('$(WebPublishProfileFile)')"
        ArgumentCount="2"
        Arguments="$(PublishProfile);$(WebPublishProfileFile)"
        LogType="Error" />
@@ -4364,7 +4364,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
        LogType="Error" />
 
     <Error Text="Target ValidatePublishProfileSettings Failed"
-           Condition="('$(WebPublishProfileFile)' == '' Or !Exists($(WebPublishProfileFile)))or 
+           Condition="('$(WebPublishProfileFile)' == '' Or !Exists('$(WebPublishProfileFile)'))or 
            ('$(WebPublishMethod)' == '' Or '$(_WPPWebPublishMethodSupports.Contains(&quot;Web$(WebPublishMethod)Publish&quot;))' == 'false' )" />
 
     <CallTarget Targets="$(OnAfterValidatePublishProfileSettings)" RunEachTargetSeparately="False" />

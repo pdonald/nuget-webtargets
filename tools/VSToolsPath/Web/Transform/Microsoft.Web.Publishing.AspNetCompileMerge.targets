@@ -103,7 +103,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <RemoveDir Condition="Exists('$(CopyBeforeAspnetCompileMergeTargetPath)')" Directories="$(CopyBeforeAspnetCompileMergeTargetPath)"/>
     <RemoveDir Condition="Exists('$(AspnetCompileMerge_TempBuildDir)')" Directories="$(AspnetCompileMerge_TempBuildDir)" />
     <RemoveDir Condition="Exists('$(AspnetCompileMergeIntermediateAssemblyInfo)')" Directories="$(AspnetCompileMergeIntermediateAssemblyInfo)" />
-    <Delete Condition="'$(AssemblyInfoDll)' != '' And Exists($(AssemblyInfoDll))"
+    <Delete Condition="'$(AssemblyInfoDll)' != '' And Exists('$(AssemblyInfoDll)')"
       DeletedFiles="$(AssemblyInfoDll)" ContinueOnError="true" />
   </Target>
 
@@ -129,7 +129,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <AspnetMergeName>aspnet_merge.exe</AspnetMergeName>
       <AspnetMergePath Condition="Exists('$(TargetFrameworkSDKToolsDirectory)$(AspnetMergeName)')">$(TargetFrameworkSDKToolsDirectory)</AspnetMergePath>
     </PropertyGroup>
-    <Error Condition="'$(AspnetMergePath)' == '' Or !Exists($(AspnetMergePath))"
+    <Error Condition="'$(AspnetMergePath)' == '' Or !Exists('$(AspnetMergePath)')"
            Text="Can't find the valid AspnetMergePath" />
   </Target>
 
@@ -198,10 +198,10 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     
     <PropertyGroup >
       <_GenerateAssemblyInfoDll>false</_GenerateAssemblyInfoDll>
-      <_GenerateAssemblyInfoDll Condition="'$(_AssemblyInfoSourceIsUpdated)' == 'true' or !Exists($(AssemblyInfoDll))">True</_GenerateAssemblyInfoDll>
+      <_GenerateAssemblyInfoDll Condition="'$(_AssemblyInfoSourceIsUpdated)' == 'true' or !Exists('$(AssemblyInfoDll)')">True</_GenerateAssemblyInfoDll>
     </PropertyGroup>
     
-    <MakeDir Condition="!Exists($(_AssemblyInfoDllDirectory))" Directories="$(_AssemblyInfoDllDirectory)" ContinueOnError="true" />
+    <MakeDir Condition="!Exists('$(_AssemblyInfoDllDirectory)')" Directories="$(_AssemblyInfoDllDirectory)" ContinueOnError="true" />
     
     <Csc Condition="'$(_GenerateAssemblyInfoDll)'=='true'"
       TargetType="library"
@@ -209,7 +209,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       OutputAssembly="$(AssemblyInfoDll)"
      />
     
-    <ItemGroup Condition="$(_GenerateAssemblyInfoDll) And Exists($(AssemblyInfoDll))">
+    <ItemGroup Condition="$(_GenerateAssemblyInfoDll) And Exists('$(AssemblyInfoDll)')">
       <FileWrites Include="$(_AssemblyInfoSource)" />
       <FileWrites Include="$(AssemblyInfoDll)" />
     </ItemGroup>
@@ -245,13 +245,13 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <AssemblyInfoDll>$(_AssemblyInfoDllDirectory)\AssemblyInfo.dll</AssemblyInfoDll>
     </PropertyGroup>
     
-    <MakeDir Condition="!Exists($(_AssemblyInfoDllDirectory))"
+    <MakeDir Condition="!Exists('$(_AssemblyInfoDllDirectory)')"
               Directories="$(_AssemblyInfoDllDirectory)" ContinueOnError="true" />
 
     
     <PropertyGroup >
       <_GenerateAssemblyInfoDll>False</_GenerateAssemblyInfoDll>
-      <_GenerateAssemblyInfoDll Condition="'$(AssemblyInfoDll)' == ''  Or !Exists($(AssemblyInfoDll))">True</_GenerateAssemblyInfoDll>
+      <_GenerateAssemblyInfoDll Condition="'$(AssemblyInfoDll)' == ''  Or !Exists('$(AssemblyInfoDll)')">True</_GenerateAssemblyInfoDll>
     </PropertyGroup>
 
     
@@ -326,7 +326,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       OutputAssembly="$(AssemblyInfoDll)"
       />
     
-    <ItemGroup Condition="$(_GenerateAssemblyInfoDll) And Exists($(AssemblyInfoDll))">
+    <ItemGroup Condition="$(_GenerateAssemblyInfoDll) And Exists('$(AssemblyInfoDll)')">
       <FileWrites Include="$(AssemblyInfoDll)" />
     </ItemGroup>
     
@@ -415,7 +415,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <AspnetCompilerPath Condition=" '$(AspnetCompilerPath)'=='' " >$(Framework40Dir)</AspnetCompilerPath>
     </PropertyGroup>
 
-    <Error Condition="'$(AspnetCompilerPath)' == '' Or !Exists($(AspnetCompilerPath))"
+    <Error Condition="'$(AspnetCompilerPath)' == '' Or !Exists('$(AspnetCompilerPath)')"
            Text="Can't find the valid AspnetCompilerPath" />
 
     <PropertyGroup>
@@ -724,7 +724,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
           Outputs="@(FilesForPackagingFromProject)"
           DependsOnTargets="$(CleanPostAspNetCompileMergeFolderDependsOn)">
 
-    <RemoveDir Condition="'$(_PostAspnetCompileMergeSingleTargetFolder)' != '' And Exists($(_PostAspnetCompileMergeSingleTargetFolder))"
+    <RemoveDir Condition="'$(_PostAspnetCompileMergeSingleTargetFolder)' != '' And Exists('$(_PostAspnetCompileMergeSingleTargetFolder)')"
                Directories="$(_PostAspnetCompileMergeSingleTargetFolder)" />
 
     <CallTarget Targets="$(OnAfterCleanPostAspNetCompileMergeFolder)" RunEachTargetSeparately="False" />

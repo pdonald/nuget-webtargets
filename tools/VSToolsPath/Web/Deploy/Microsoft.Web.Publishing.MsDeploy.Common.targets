@@ -51,7 +51,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
   <Target Name="ProcessPublishDatabaseSettings" DependsOnTargets="$(ProcessPublishDatabaseSettingsDependsOn)" Condition="$(PublishDatabases) And '$(FilePreview)'!='true' And ('$(PublishDatabaseSettings)' != '' Or '$(PublishDatabaseSettingsFile)' != '')">
 
-    <MakeDir Directories="$(DatabaseDeployIntermediateOutputPath)" Condition="!Exists($(DatabaseDeployIntermediateOutputPath))" />
+    <MakeDir Directories="$(DatabaseDeployIntermediateOutputPath)" Condition="!Exists('$(DatabaseDeployIntermediateOutputPath)')" />
     <CreateProviderList ProjectFileFullPath="$(WebPublishPipeLineProjectFullPath)"
                         ProvidersXml="$(PublishDatabaseSettings)"
                         IntermediateOutputPath="$(DatabaseDeployIntermediateOutputPath)"
