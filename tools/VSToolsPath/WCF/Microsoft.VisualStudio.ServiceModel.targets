@@ -1,0 +1,48 @@
+<!--
+***********************************************************************************************
+Microsoft.ServiceModel.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask 
+    TaskName="Microsoft.VisualStudio.ServiceModel.Validation.ConfigValidationTask"  
+    AssemblyName="Microsoft.VisualStudio.ServiceModel.Core, Version=14.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+
+  <Target Name="DoConfigValidation" AfterTargets="Build"
+           Condition="'$(WcfConfigValidationEnabled)' == 'true' And '$(TargetFrameworkVersion)' != 'v2.0' And '$(TargetFrameworkVersion)' != 'v3.0' And '$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v4.0'">
+
+    <PropertyGroup>
+      <WcfConfigFile>@(AppConfigWithTargetPath)</WcfConfigFile>
+      <WcfConfigFile Condition="'$(WcfConfigFile)' == ''">Web.config</WcfConfigFile>
+      <WcfConfigValidationPreCondition>False</WcfConfigValidationPreCondition>
+      <WcfConfigValidationPreCondition Condition="'$(WcfConfigFile)' != '' And Exists('$(WcfConfigFile)')">True</WcfConfigValidationPreCondition>
+    </PropertyGroup>
+    
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuiltProjectOutputGroupDependencies" Condition="'$(WcfConfigValidationPreCondition)' == 'True'">
+      <Output TaskParameter="TargetOutputs" ItemName="ReferenceAssemblies" />
+    </MSBuild>
+
+    <ConfigValidationTask Condition="'$(WcfConfigValidationPreCondition)' == 'True'"
+     OutputAssembly="$(TargetPath)"
+     ConfigFilePath="$(WcfConfigFile)"
+     ReferenceAssemblies="@(ReferenceAssemblies)"
+     ValidationRecordTempFilePath="$(IntermediateOutputPath)\WcfConfigValidationData.tmp">
+    </ConfigValidationTask>
+
+  </Target>
+
+  <Target Name="DoConfigValidationCleanUp" AfterTargets="Clean">
+
+    <Delete Files="$(IntermediateOutputPath)\WcfConfigValidationData.tmp" />
+
+  </Target>
+
+</Project>
