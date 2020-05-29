@@ -2,13 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>MSBuild.Microsoft.VisualStudio.Web.targets</id>
-    <version>14.0.0.3</version>
+    <version>15.0.0</version>
     <authors>Microsoft</authors>
     <owners>Pēteris Ņikiforovs</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/pdonald/nuget-webtargets</projectUrl>
     <description>MSBuild targets for Web and WebApplications that come with Visual Studio. Useful for build servers that do not have Visual Studio installed.</description>
     <releaseNotes>
+        v15.0.0 - Update files from Visual Studio 2017
         v14.0.0.3 - Fix MSBuildThisFileFullPath/MSBuildThisFileDirectory
         v14.0.0.2 - Fix no support for non-default `repositoryPath` - https://github.com/pdonald/nuget-webtargets/issues/6
         v14.0.0.1 - Automatically use the package version if VSToolsPath is not specified by VS.

@@ -665,8 +665,8 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <GenerateSampleDeployScriptDestinationRoot></GenerateSampleDeployScriptDestinationRoot>
       <GenerateSampleDeployScriptParameters>@(_MSDeploySampleParametersValue->'%25RootPath%25%(FileName)%(Extension)')</GenerateSampleDeployScriptParameters>
       <_ScriptGenerateSampleDeployScriptReadMeLocation>%25RootPath%25$(GenerateSampleDeployScriptReadMeFileName)</_ScriptGenerateSampleDeployScriptReadMeLocation>
-      <_MSdeployFwdLink>http://go.microsoft.com/?linkid=9278654</_MSdeployFwdLink>
-      <_SampleDeployCmdFwdLink>http://go.microsoft.com/fwlink/?LinkID=183544</_SampleDeployCmdFwdLink>
+      <_MSdeployFwdLink>https://go.microsoft.com/?linkid=9278654</_MSdeployFwdLink>
+      <_SampleDeployCmdFwdLink>https://go.microsoft.com/fwlink/?LinkID=183544</_SampleDeployCmdFwdLink>
     </PropertyGroup>
 
     <ItemGroup>
@@ -959,6 +959,9 @@ goto :eof
 :MSDeployWithArgMsDeployAdditionalFlag
 echo. %_MSDeployCommandline% %_MsDeployAdditionalFlags% %_ArgMsDeployAdditionalFlags:&amp;=^&amp;%
 %_MSDeployCommandline% %_MsDeployAdditionalFlags% %_ArgMsDeployAdditionalFlags:&amp;=^&amp;%
+IF %ERRORLEVEL% NEQ 0 (
+  exit 1
+)
 goto :eof
 
 @rem ---------------------------------------------------------------------------------
@@ -967,6 +970,9 @@ goto :eof
 :MSDeployWithOutArgMsDeployAdditionalFlag
 echo. %_MSDeployCommandline% %_MsDeployAdditionalFlags%
 %_MSDeployCommandline% %_MsDeployAdditionalFlags%
+IF %ERRORLEVEL% NEQ 0 (
+  exit 1
+)
 goto :eof
 
 @rem ---------------------------------------------------------------------------------

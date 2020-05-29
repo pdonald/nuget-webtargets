@@ -107,7 +107,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
   </PropertyGroup>
   <Target Name="_CopyWebApplication"
-          Condition="!$(Disable_CopyWebApplication) And '$(OutDir)' != '$(OutputPath)'"
+          Condition="!$(Disable_CopyWebApplication) And !$(WebProjectOutputDirInsideProject)"
           DependsOnTargets="$(_CopyWebApplicationDependsOn)">
 
     <CallTarget Condition="'$(OnAfter_CopyWebApplication)' != ''" Targets="$(OnAfter_CopyWebApplication)" RunEachTargetSeparately="true" />
@@ -125,7 +125,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 	to a folder other than ~\bin such as is the case with Team Build.
 	============================================================
 	-->
-  <Target Name="_CopyWebApplicationLegacy" Condition="!$(Disable_CopyWebApplication) And '$(OutDir)' != '$(OutputPath)'" >
+  <Target Name="_CopyWebApplicationLegacy" Condition="!$(Disable_CopyWebApplication) And !$(WebProjectOutputDirInsideProject)" >
     <!-- Log tasks -->
     <Message Text="Copying Web Application Project Files for $(MSBuildProjectName)" />
 
@@ -180,24 +180,24 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
     <!-- Copy content files recursively to _PublishedWebsites\app\ folder -->
     <Copy SourceFiles="@(Content)" Condition="'%(Content.Link)' == ''"
-          DestinationFolder="$(WebProjectOutputDir)\%(Content.RelativeDir)"
+          DestinationFiles="@(Content -> '$(WebProjectOutputDir)\%(RelativeDir)\%(FileName)%(Extension)')"
           SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
     <Copy SourceFiles="@(Content)" Condition="!$(DisableLinkInCopyWebApplicaton) And '%(Content.Link)' != ''"
-          DestinationFiles="$(WebProjectOutputDir)\%(Content.Link)"
+          DestinationFiles="@(Content -> '$(WebProjectOutputDir)\%(Link)')"
           SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
 
     <!-- Copy items that have been marked to be copied to the bin folder -->
     <Copy SourceFiles="@(_SourceItemsToCopyToOutputDirectory)"
-          DestinationFolder="$(WebProjectOutputDir)\bin"
+          DestinationFiles="@(_SourceItemsToCopyToOutputDirectory-> '$(WebProjectOutputDir)\bin\%(TargetPath)')" 
           SkipUnchangedFiles="true"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
     <Copy SourceFiles="@(_SourceItemsToCopyToOutputDirectoryAlways)"
-          DestinationFolder="$(WebProjectOutputDir)\bin"
+          DestinationFiles="@(_SourceItemsToCopyToOutputDirectoryAlways-> '$(WebProjectOutputDir)\bin\%(TargetPath)')" 
           SkipUnchangedFiles="false"
           Retries="$(CopyRetryCount)"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"/>
@@ -315,7 +315,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
         Targets="$(ProjectReferenceBuildTargets)"
         Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration);Platform=AnyCPU;BuildingSolutionFile=false"
         BuildInParallel="false"
-        Condition="'$(BuildingInsideVisualStudio)' != 'true' and '@(_SilverlightApplications)' != ''">
+        Condition="'$(BuildingInsideVisualStudio)' != 'true' and '@(_SilverlightApplications)' != '' and '$(BuildProjectReferences)' != 'false'">
     </MSBuild>
 
     <!--Copy the outputs to the target folder-->
