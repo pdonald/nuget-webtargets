@@ -12,6 +12,10 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <WebPublishTasksDir Condition=" '$(WebPublishTasksDir)'=='' ">$(MSBuildThisFileDirectory)</WebPublishTasksDir>
+  </PropertyGroup>
+  
   <UsingTask TaskName="GetProjectProperties" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
   <UsingTask TaskName="TransformXml" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
   <UsingTask TaskName="ParameterizeTransformXml" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
@@ -49,6 +53,11 @@ Copyright (C) Microsoft Corporation. All rights reserved.
   <UsingTask TaskName="PublishNuGetPackage" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
   <UsingTask TaskName="CreateAppHostXDTFile" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
   <UsingTask TaskName="VerifyAzureNet46Support" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll"/>
+  <UsingTask TaskName="PublishTelemetry" AssemblyFile="Microsoft.Web.Publishing.Tasks.dll" />
+  
+  <!-- These tasks are used by CustomPublish target-->
+  <UsingTask TaskName="GetAllPublishProperties" AssemblyFile="$(WebPublishTasksDir)Microsoft.Web.Publishing.Tasks.dll"/>
+  <UsingTask TaskName="InvokePowerShell" AssemblyFile="$(WebPublishTasksDir)Microsoft.Web.Publishing.Tasks.dll"/>
 
   <!-- The build process can be extended in a similar way as MS.Common.targets -->
   <PropertyGroup>
@@ -220,11 +229,8 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <AlternativeProjectDirectory Condition="!HasTrailingSlash('$(AlternativeProjectDirectory)')">$(AlternativeProjectDirectory)</AlternativeProjectDirectory>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- For website project we will always exclude debug symbols from publishing. This can be overridden in the .pubxml file. -->
-    <ExcludeGeneratedDebugSymbol Condition="'$(ExcludeGeneratedDebugSymbol)'=='' And '$(_WebProjectType)' == 'WebSite'">True</ExcludeGeneratedDebugSymbol>
-    
-    <ExcludeGeneratedDebugSymbol Condition="'$(ExcludeGeneratedDebugSymbol)'=='' And '$(Configuration)' == 'Release'">True</ExcludeGeneratedDebugSymbol>
+  <PropertyGroup>    
+    <ExcludeGeneratedDebugSymbol Condition="'$(ExcludeGeneratedDebugSymbol)'=='' And '$(CopyOutputSymbolsToPublishDirectory)' == 'false'">True</ExcludeGeneratedDebugSymbol>
     <ExcludeGeneratedDebugSymbol Condition="'$(ExcludeGeneratedDebugSymbol)'==''">False</ExcludeGeneratedDebugSymbol>
 
     <!-- This will control whether XML files from ResolveAssemblyReference is published, default is true (to exclude) -->
@@ -1549,6 +1555,16 @@ Copyright (C) Microsoft Corporation. All rights reserved.
       <FilesForPackagingFromProject Include="@(WebConfigsToTransform->'%(TransformOutputFile)')" Condition="'@(WebConfigsToTransform)'!='' And !%(WebConfigsToTransform.Exclude) And Exists(%(WebConfigsToTransform.TransformOutputFile))"/>
     </ItemGroup>
 
+    <PropertyGroup>
+      <IgnoreProjectGuid Condition="'$(IgnoreProjectGuid)' != 'true'">false</IgnoreProjectGuid>
+    </PropertyGroup>
+    
+    <PublishTelemetry
+      IgnoreProjectGuid="$(IgnoreProjectGuid)"
+      WebConfigFilePath="%(WebConfigsToTransform.TransformOutputFile)"
+      ProjectRootPath="$(WebPublishPipelineSourceRootDirectory)"
+      ProjectGuid="$(ProjectGuid)" />
+    
     <GetPublishingLocalizedString
        Importance="High"
        Condition="'@(WebConfigsToTransform)'!='' And !%(WebConfigsToTransform.Exclude) And Exists(%(WebConfigsToTransform.TransformOutputFile))"
@@ -4766,34 +4782,54 @@ Copyright (C) Microsoft Corporation. All rights reserved.
         ProviderName="dbDacFx"
         ProviderPathes="@(_DbDacFxDestinationPathesToPublish)">
       </DetectRemoteProvider>
-
     </Target>
-
-
-  <!--***********************************************************************-->
-  <!--Custom Publish-->
-  <!--***********************************************************************-->
-
-  <Target Name="CustomPublish" >
-    <!-- MicroservicePublish-->
-    <CallTarget Targets="$(PublishTarget)" Condition=" '$(PublishTarget)' != ''"/>
   
+  <!--
+  ***********************************************************************************************
+  TARGET : CustomPublish
+  ***********************************************************************************************
+ -->
+  
+  <PropertyGroup>
+    <CustomPublishDependsOn>
+      DockerPublish
+    </CustomPublishDependsOn>
+  </PropertyGroup>
+
+  <Target Name="CustomPublish"
+          DependsOnTargets="$(CustomPublishDependsOn)" />
+
+  <!--
+  ***********************************************************************************************
+  TARGET : DockerPublish
+  ***********************************************************************************************
+ -->
+  <PropertyGroup>
+    <DockerPublishDependsOn>
+      $(DockerPublishDependsOn);
+      _InitDockerComposeBuildSource;
+      GatherAllFilesToPublish;
+      DockerComposeBuild;
+    </DockerPublishDependsOn>
+  </PropertyGroup>
+
+  <Target Name="DockerPublish"
+          Condition="'$(DockerPublish)' == 'true'"
+          DependsOnTargets="$(DockerPublishDependsOn)" />
+
+  <!--
+  ***********************************************************************************************
+  TARGET : _InitDockerComposeBuildSource
+  ***********************************************************************************************
+ -->
+
+  <Target Name="_InitDockerComposeBuildSource">
+    <PropertyGroup>
+      <WPPAllFilesInSingleFolder>obj/Docker/publish/</WPPAllFilesInSingleFolder>
+      <DockerComposeBuildSource>$(WPPAllFilesInSingleFolder)</DockerComposeBuildSource>
+    </PropertyGroup>
   </Target>
 
-  <Target Name="Microservice">
-    <PropertyGroup>
-    <MicroserviceRootFolder Condition="'$(MicroserviceRootFolder)' == '' ">$(WebPublishPipelineProjectDirectory)\apiapp.json</MicroserviceRootFolder>
-    </PropertyGroup>
-
-    <PublishNuGetPackage
-      ManifestFileFullPath="$(MicroserviceRootFolder)"
-      ProjectFileFullPath="$(WebPublishPipeLineProjectFullPath)"
-      IntermediateOutputPath="$(_WPPDefaultIntermediateOutputPath)"
-      ProfileUserFile="$(PublishProfileRootFolder)\$(PublishProfileName).pubxml.user"
-      ApiKey="$(MicroserviceApiKey)"
-      />
-</Target>
-  
   <!-- The build process can be extended in a similar way as MS.Common.targets -->
   <PropertyGroup>
     <ImportByWildcardAfterMicrosoftWebPublishingTargets Condition="'$(ImportByWildcardAfterMicrosoftWebPublishingTargets)'==''">true</ImportByWildcardAfterMicrosoftWebPublishingTargets>
